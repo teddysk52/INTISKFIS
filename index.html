@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INTISKFIS</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Montserrat', sans-serif;
+background: #fafafa;
+overflow: hidden;
+height: 100vh;
+}
+
+.bg-container {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100vh;
+display: flex;
+z-index: 0;
+gap: 21cm;
+justify-content: space-between;
+pointer-events: none;
+}
+
+.bg-left, .bg-right {
+flex: 1;
+min-width: 200px;
+background-size: cover;
+background-position: center;
+position: relative;
+transition: filter 0.3s ease;
+pointer-events: none;
+}
+
+.bg-left.blurred, .bg-right.blurred {
+filter: blur(15px);
+}
+
+.bg-left::before,
+.bg-right::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: linear-gradient(to bottom, 
+    rgba(0,0,0,0.1) 0%, 
+    rgba(0,0,0,0.05) 50%, 
+    rgba(0,0,0,0.3) 100%);
+}
+
+.blur-btn {
+position: fixed;
+top: 30px;
+width: 60px;
+height: 60px;
+background: rgba(255, 255, 255, 0.95);
+border: 3px solid #000;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+z-index: 10000;
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+transition: all 0.3s ease;
+user-select: none;
+}
+
+.blur-btn svg {
+width: 30px;
+height: 30px;
+stroke: #000;
+fill: none;
+stroke-width: 2.5;
+transition: all 0.3s ease;
+}
+
+.blur-btn.left {
+left: 100px;
+}
+
+.blur-btn.right {
+right: 100px;
+}
+
+.blur-btn:hover {
+background: #fff;
+transform: scale(1.1);
+box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
+}
+
+.blur-btn.active {
+background: #000;
+}
+
+.blur-btn.active svg {
+stroke: #fff;
+}
+
+.bg-left {
+background-image: url('images/1.jpg');
+}
+
+.bg-right {
+background-image: url('images/2.jpg');
+}
+
+.ad-bubble {
+position: absolute;
+bottom: 3rem;
+left: 50%;
+transform: translateX(-50%);
+background: rgba(255, 255, 255, 0.98);
+padding: 1.2rem 1.8rem;
+border-radius: 15px;
+box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+backdrop-filter: blur(10px);
+border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.ad-bubble p {
+font-size: 0.95rem;
+font-weight: 700;
+color: #000;
+text-align: center;
+line-height: 1.4;
+max-width: 200px;
+letter-spacing: -0.02em;
+}
+
+.content {
+position: relative;
+z-index: 1;
+height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 2rem;
+overflow: hidden;
+}
+
+.sheet {
+width: 21cm;
+height: calc(100vh - 4rem);
+max-height: 95vh;
+background: white;
+box-shadow: 0 10px 50px rgba(0, 0, 0, 0.15);
+position: relative;
+padding: 2.5rem 2.5rem 5rem 2.5rem;
+overflow-y: auto;
+display: flex;
+flex-direction: column;
+justify-content: center;
+border-radius: 4px;
+}
+
+.timer {
+position: absolute;
+top: 1rem;
+right: 2.5rem;
+font-size: 1.2rem;
+font-weight: 700;
+color: #000;
+background: #f5f5f5;
+padding: 0.5rem 1.5rem;
+border-radius: 10px;
+display: none;
+}
+
+.timer.active {
+display: block;
+}
+
+.finish-early-btn {
+position: absolute;
+top: 1rem;
+right: 11rem;
+padding: 0.5rem 1.2rem;
+background: #ff4444;
+color: white;
+border: none;
+border-radius: 8px;
+font-weight: 700;
+cursor: pointer;
+font-size: 0.85rem;
+display: none;
+transition: all 0.2s;
+}
+
+.finish-early-btn.active {
+display: block;
+}
+
+.finish-early-btn:hover {
+background: #cc0000;
+transform: scale(1.05);
+}
+border-radius: 10px;
+display: none;
+}
+
+.timer.active {
+display: block;
+}
+
+.home-page {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+text-align: center;
+height: 100%;
+gap: 2rem;
+}
+
+.printer-images {
+display: flex;
+gap: 1.5rem;
+margin-bottom: 2rem;
+justify-content: center;
+flex-wrap: wrap;
+}
+
+.printer-img {
+width: 140px;
+height: 140px;
+object-fit: cover;
+border: 4px solid #000;
+border-radius: 12px;
+transition: transform 0.2s ease;
+}
+
+.printer-img:hover {
+transform: scale(1.05);
+}
+
+.logo {
+font-size: 4rem;
+font-weight: 800;
+letter-spacing: -0.05em;
+color: #000;
+}
+
+.subtitle {
+font-size: 1.3rem;
+font-weight: 500;
+color: #666;
+line-height: 1.6;
+max-width: 500px;
+}
+
+.cta-button {
+background: #000;
+color: white;
+border: none;
+padding: 1rem 2.5rem;
+font-size: 1rem;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.2s;
+letter-spacing: -0.01em;
+font-family: 'Montserrat', sans-serif;
+border-radius: 4px;
+}
+
+.cta-button:hover {
+background: #333;
+transform: translateY(-2px);
+}
+
+.page {
+display: none;
+flex-direction: column;
+height: 100%;
+}
+
+.page.active {
+display: flex;
+}
+
+.page-title {
+font-size: 1.7rem;
+font-weight: 700;
+margin-bottom: 1.5rem;
+letter-spacing: -0.03em;
+}
+
+.page-content {
+font-size: 0.95rem;
+line-height: 1.6;
+color: #333;
+flex: 1;
+overflow-y: auto;
+padding: 2rem 0.5rem 2rem 0;
+min-height: 400px;
+}
+
+.question {
+margin-bottom: 1.8rem;
+}
+
+.question-text {
+font-weight: 600;
+margin-bottom: 0.7rem;
+color: #000;
+font-size: 0.95rem;
+}
+
+.options {
+margin-left: 1.5rem;
+font-size: 0.9rem;
+}
+
+.option {
+margin-bottom: 0.6rem;
+cursor: pointer;
+transition: all 0.2s;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+padding: 0.4rem;
+border-radius: 4px;
+}
+
+.option:hover {
+background: #f5f5f5;
+}
+
+.option input[type="checkbox"] {
+width: 18px;
+height: 18px;
+cursor: pointer;
+}
+
+.input-field, textarea {
+width: 100%;
+border: none;
+border-bottom: 1px solid #ddd;
+padding: 0.4rem 0;
+font-size: 0.95rem;
+font-family: 'Montserrat', sans-serif;
+margin-top: 0.4rem;
+outline: none;
+transition: border-color 0.2s;
+resize: vertical;
+}
+
+.input-field:focus, textarea:focus {
+border-bottom-color: #000;
+}
+
+.navigation {
+position: absolute;
+bottom: 1.5rem;
+left: 2.5rem;
+right: 2.5rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+font-size: 0.9rem;
+color: #666;
+border-top: 1px solid #eee;
+padding-top: 1rem;
+}
+
+.nav-button {
+background: none;
+border: none;
+color: #000;
+cursor: pointer;
+font-size: 0.9rem;
+font-weight: 600;
+padding: 0.5rem 0;
+transition: opacity 0.2s;
+font-family: 'Montserrat', sans-serif;
+}
+
+.nav-button:hover:not(:disabled) {
+opacity: 0.6;
+}
+
+.nav-button:disabled {
+opacity: 0.3;
+cursor: not-allowed;
+}
+
+.footer {
+position: absolute;
+bottom: 0.5rem;
+left: 2.5rem;
+right: 2.5rem;
+text-align: center;
+font-size: 0.7rem;
+color: #999;
+letter-spacing: 0.02em;
+}
+
+.comparison-table {
+width: 100%;
+margin-top: 1rem;
+border-collapse: collapse;
+font-size: 0.9rem;
+}
+
+.comparison-table td {
+padding: 0.6rem;
+border-bottom: 1px solid #eee;
+}
+
+.comparison-table td:first-child {
+font-weight: 600;
+width: 40%;
+}
+
+.form-group {
+margin-bottom: 1.5rem;
+}
+
+.form-group label {
+display: block;
+font-weight: 600;
+margin-bottom: 0.5rem;
+font-size: 0.9rem;
+}
+
+.submit-button {
+background: #000;
+color: white;
+border: none;
+padding: 0.8rem 2rem;
+font-size: 0.95rem;
+font-weight: 600;
+cursor: pointer;
+font-family: 'Montserrat', sans-serif;
+border-radius: 4px;
+margin-top: 1rem;
+}
+
+.submit-button:hover {
+background: #333;
+}
+
+@media (max-width: 1400px) {
+.bg-left, .bg-right {
+display: none;
+}
+.bg-container {
+gap: 0;
+}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-container">
+<div class="bg-left" id="bgLeft">
+<div class="ad-bubble">
+<p>Zde mohla být vaše reklama</p>
+</div>
+</div>
+<div class="bg-right" id="bgRight">
+<div class="ad-bubble">
+<p>Zde mohla být vaše reklama</p>
+</div>
+</div>
+</div>
+
+<div class="blur-btn left" id="blurBtnLeft" onclick="toggleBlur('left')">
+<svg viewBox="0 0 24 24">
+<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+<circle cx="12" cy="12" r="3"></circle>
+</svg>
+</div>
+<div class="blur-btn right" id="blurBtnRight" onclick="toggleBlur('right')">
+<svg viewBox="0 0 24 24">
+<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+<circle cx="12" cy="12" r="3"></circle>
+</svg>
+</div>
+
+<div class="content">
+<div class="sheet">
+<div class="timer" id="timer">35:00</div>
+<button class="finish-early-btn" id="finishBtn" onclick="finishEarly()">Dokončit předčasně</button>
+
+<div class="page active" data-page="0">
+<div class="home-page">
+<div class="logo">INTISKFIS</div>
+<div class="printer-images">
+<img src="images/3.jpg" class="printer-img" alt="Printer 1">
+<img src="images/4.png" class="printer-img" alt="Printer 2">
+<img src="images/5.webp" class="printer-img" alt="Printer 3">
+</div>
+<div class="subtitle">Kámo, nechceš dostat za 5?<br>Čas začít makat, vole.</div>
+<button class="cta-button" onclick="startWorksheet()">Začít pracovní list</button>
+</div>
+</div>
+
+<div class="page" data-page="1">
+<div class="page-title">Úvod do světa tisku</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Tiskárny, vole! Zařízení, která ve škole nikdy nefungují, doma dochází toner a v práci je všichni používají, ale nikdo neví jak to vlastně funguje.</p>
+<p style="margin-bottom: 1.5rem;">Dneska si projdeme, jak to vlastně celé funguje. Bez keců, bez zbytečný teorie. Naučíme se o <strong>typech tiskáren</strong>, <strong>jak se připojují</strong> (USB, WiFi, LAN), co je to <strong>tiskový server</strong> a proč je důležitej, a taky <strong>princip tisku</strong> u každého typu.</p>
+<p style="margin-bottom: 1.5rem;">Slibuju že to nebude nuda jako učebnice z 90. let!</p>
+<div class="question">
+<div class="question-text">Než začneme - co už víš o tiskárnách?</div>
+<textarea class="input-field" placeholder="Jakýkoliv typy tiskáren znáš? Jak fungují?"></textarea>
+</div>
+<div class="question">
+<div class="question-text">Proč myslíš, že školní tiskárna nikdy nefunguje když to nejvíc potřebuješ?</div>
+<textarea class="input-field" placeholder="Tvoje teorie (buď upřímnej)..."></textarea>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()" disabled>← Zpět</button>
+<span>Strana 1 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="2">
+<div class="page-title">Jehličková tiskárna</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Představ si psací stroj na steroidech. Nebo spíš na důchodu, vole!</p>
+<p style="margin-bottom: 1.5rem;"><strong>Princip:</strong> Malé jehličky (9 nebo 24) mechanicky bijí do barvící pásky, která se dotýká papíru. Jako když píšeš psacím strojem, ale automaticky.</p>
+<p style="margin-bottom: 2rem;">Hlasitá, pomalá, ale pořád se používá! Hlavně tam, kde musíš tisknout průbojně - více kopií najednou (faktury, lístky, průvodky).</p>
+<div class="question">
+<div class="question-text">V čem je jehličková tiskárna lepší než laserová nebo inkoustová?</div>
+<textarea class="input-field" placeholder="Průbojný tisk (více kopií najednou), levný provoz na kopii..."></textarea>
+</div>
+<div class="question">
+<div class="question-text">Proč je v moderní kanceláři nikdo nechce?</div>
+<textarea class="input-field" placeholder="Hluk, nízká kvalita, pomalá rychlost..."></textarea>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 2 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="3">
+<div class="page-title">Inkoustová tiskárna</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Ta klasika z domácnosti, kámo. Levná při koupi, drahá při provozu.</p>
+<p style="margin-bottom: 1.5rem;"><strong>Princip:</strong> Tisková hlava stříká mikroskopické kapičky tekutého inkoustu přímo na papír. Tisíce malých kapiček tvoří obrázek nebo text. Existují 2 technologie: termální (Canon, HP) a piezoelektrická (Epson).</p>
+<p style="margin-bottom: 2rem;">Perfektní na fotky a barevný tisk doma, hrozná na peněženku kvůli drahým cartridgím!</p>
+<div class="question">
+<div class="question-text">Proč jsou náhradní cartridge často dražší než celá nová tiskárna?</div>
+<textarea class="input-field" placeholder="Businessový model: tiskárna levně, pak tě dostanou na inkoustech..."></textarea>
+</div>
+<div class="question">
+<div class="question-text">Co se stane, když inkoustovou tiskárnu měsíc nepoužiješ?</div>
+<div class="options">
+<div class="option">A) Nic, čeká trpělivě</div>
+<div class="option">B) Zaschne inkoust v tryskách</div>
+<div class="option">C) Začne tisknout sama od sebe</div>
+</div>
+</div>
+<div class="question">
+<div class="question-text">Jaký je rozdíl mezi termální a piezo tiskovou hlavou?</div>
+<textarea class="input-field" placeholder="Termální = ohřev, piezo = krystal vibruje..."></textarea>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 3 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="4">
+<div class="page-title">Laserová tiskárna</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Profesionál mezi tiskárnami, vole! Rychlá, kvalitní, dražší na začátku, ale levnější dlouhodobě.</p>
+<p style="margin-bottom: 1.5rem;"><strong>Princip (tohle je fakt cool):</strong></p>
+<p style="margin-bottom: 1rem;">1. Laser nakreslí obraz na světlocitlivý válec (fotoválec)</p>
+<p style="margin-bottom: 1rem;">2. Nabitý válec přitáhne práškový toner</p>
+<p style="margin-bottom: 1rem;">3. Toner se přenese na papír</p>
+<p style="margin-bottom: 2rem;">4. Fuser (žhavá jednotka) "upeče" toner na papír teplem (cca 200°C!)</p>
+<div class="question">
+<div class="question-text">Proč je laserová tiskárna rychlejší než inkoustová?</div>
+<textarea class="input-field" placeholder="Celá stránka najednou, ne řádek po řádku..."></textarea>
+</div>
+<div class="question">
+<div class="question-text">Proč je toner lepší než inkoust na dlouhodobý provoz?</div>
+<div class="options">
+<div class="option">A) Nezaschne když nepoužíváš</div>
+<div class="option">B) Vydrží víc stran</div>
+<div class="option">C) Levnější cena za stranu</div>
+<div class="option">D) Všechno výše</div>
+</div>
+</div>
+<div class="question">
+<div class="question-text">Jaká je role fuseru?</div>
+<textarea class="input-field" placeholder="Zapéká toner na papír teplem..."></textarea>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 4 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="5">
+<div class="page-title">Termální tiskárna</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Žádný inkoust, žádný toner. Jen teplo a speciální papír.</p>
+<p style="margin-bottom: 2rem;">Vidíš je v obchodech (účtenky), na poště (štítky), v nemocnici (výsledky). Rychlé, tiché, ale nevydrží navěky. Teplo "spálí" obraz do papíru.</p>
+<div class="question">
+<div class="question-text">Co se stane s termálním papírem, když ho necháš na slunci?</div>
+<input type="text" class="input-field" placeholder="Představ si starou účtenku...">
+</div>
+<div class="question">
+<div class="question-text">Proč se nehodí na archivaci dokumentů?</div>
+<textarea class="input-field" placeholder="Vybledne časem, teplo ji ničí..."></textarea>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 5 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="6">
+<div class="page-title">Srovnání typů tiskáren</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Každá tiskárna má svůj účel, kámo. Žádná není univerzální superhrdina!</p>
+<table class="comparison-table">
+<tr>
+<td><strong>Jehličková</strong></td>
+<td>Průbojný tisk (víc kopií), faktury, pomalá, hlučná, levný provoz</td>
+</tr>
+<tr>
+<td><strong>Inkoustová</strong></td>
+<td>Fotky doma, výborné barvy, drahé cartridge, zaschne když nepoužíváš</td>
+</tr>
+<tr>
+<td><strong>Laserová</strong></td>
+<td>Kancelář, rychlost, kvalita, toner nevyschne, dražší na začátku</td>
+</tr>
+<tr>
+<td><strong>Termální</strong></td>
+<td>Účtenky, štítky, rychlá, tichá, ale vybledne časem</td>
+</tr>
+</table>
+<div class="question" style="margin-top: 2rem;">
+<div class="question-text">Kterou bys koupil do domácnosti a proč?</div>
+<textarea class="input-field" placeholder="Záleží jak často tisknuješ... Laser = hodně, Inkjet = občas fotky..."></textarea>
+</div>
+<div class="question">
+<div class="question-text">A do firmy s 20 lidmi?</div>
+<textarea class="input-field" placeholder="Laser - rychlá, levný tisk per page, spolehlivá..."></textarea>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 6 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="7">
+<div class="page-title">Připojení: USB</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Klasika. Kabel z tiskárny do počítače. Funguje vždycky. No, skoro.</p>
+<p style="margin-bottom: 2rem;">Rychlé, spolehlivé, ale jeden počítač = jedna tiskárna. To je v roce 2026 trochu fail. Dneska je běžnější síťové připojení!</p>
+<div class="question">
+<div class="question-text">Jaká je největší nevýhoda USB připojení?</div>
+<div class="options">
+<div class="option">A) Pomalé</div>
+<div class="option">B) Nesdílitelné mezi více počítači</div>
+<div class="option">C) Drahé</div>
+</div>
+</div>
+<div class="question">
+<div class="question-text">Ve třídě je 30 studentů a jedna USB tiskárna. Jaké moderní řešení navrhnout?</div>
+<textarea class="input-field" placeholder="Připojit přes WiFi/LAN, sdílet přes tiskový server..."></textarea>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 7 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="8">
+<div class="page-title">Připojení: Wi-Fi</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">21. století called, kámo! Tiskárna na Wi-Fi je standard.</p>
+<p style="margin-bottom: 2rem;">Všichni v síti můžou tisknout. Z mobilu, notebooku, tabletu. Dokud to funguje, je to super. Když ne, je to peklo. Ale rozhodně nejpohodlnější způsob dneska!</p>
+<div class="question">
+<div class="question-text">Co potřebuješ, aby Wi-Fi tiskárna fungovala?</div>
+<textarea class="input-field" placeholder="WiFi síť, správný driver, tiskárna ve stejné síti jako PC..."></textarea>
+</div>
+<div class="question">
+<div class="question-text">Proč se někdy ztratí v síti?</div>
+<div class="options">
+<div class="option">A) Špatný signál WiFi</div>
+<div class="option">B) Změnila se IP adresa</div>
+<div class="option">C) Restartoval se router</div>
+<div class="option">D) Všechno výše</div>
+</div>
+</div>
+<div class="question">
+<div class="question-text">Je Wi-Fi lepší než USB? Proč?</div>
+<textarea class="input-field" placeholder="Mobilita, sdílení, bez kabelů..."></textarea>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 8 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="9">
+<div class="page-title">Připojení: LAN (Ethernet)</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Jako Wi-Fi, ale s kabelem. Spolehlivější, rychlejší, méně sexy, ale profíci to milují!</p>
+<p style="margin-bottom: 2rem;">V korporátu = standard. Tiskárna má pevnou IP, všichni v síti ji vidí, nikdo se nediví, že nefunguje. Ideál pro tiskový server!</p>
+<div class="question">
+<div class="question-text">Proč je LAN (Ethernet) lepší než Wi-Fi v kanceláři?</div>
+<textarea class="input-field" placeholder="Spolehlivost, rychlost, stabilní připojení, žádné výpadky signálu..."></textarea>
+</div>
+<div class="question">
+<div class="question-text">Co je to fixní (statická) IP adresa a proč ji chceš mít na tiskárně?</div>
+<textarea class="input-field" placeholder="Adresa se nemění, tiskárna je vždy na stejném místě v síti..."></textarea>
+</div>
+<div class="question">
+<div class="question-text">Která možnost připojení je nejlepší pro školu nebo firmu?</div>
+<div class="options">
+<div class="option">A) USB - žádný sdílení</div>
+<div class="option">B) Wi-Fi - může vypadávat</div>
+<div class="option">C) LAN - stabilní a rychlé</div>
+<div class="option">D) Bluetooth - moc krátký dosah</div>
+</div>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 9 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="10">
+<div class="page-title">Připojení: Bluetooth</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Používá to tak 5 lidí na světě. Hlavně na mobilní tiskárny.</p>
+<p style="margin-bottom: 2rem;">Krátký dosah, pomalé, ale občas se hodí (fotky z mobilu na přenosnou tiskárnu).</p>
+<div class="question">
+<div class="question-text">Kdy má smysl Bluetooth tiskárna?</div>
+<div class="options">
+<div class="option">A) V kanceláři</div>
+<div class="option">B) Doma</div>
+<div class="option">C) Na výletě (přenosná)</div>
+</div>
+</div>
+<div class="question">
+<div class="question-text">Proč se Bluetooth nepoužívá v kancelářích?</div>
+<input type="text" class="input-field" placeholder="Dosah, rychlost...">
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 10 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="11">
+<div class="page-title">Cloud Print & Moderní možnosti</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Poslat dokument na tisk z druhého konce světa? Cloud print to umožňuje, kámo!</p>
+<p style="margin-bottom: 1.5rem;">Tiskárna připojená na cloud službu (Google Cloud Print už RIP 💀, ale jiné existují - HP Smart, Epson Connect). Můžeš tisknout odkudkoliv přes internet. Trochu sci-fi, trochu creepy, ale super užitečný!</p>
+<p style="margin-bottom: 2rem;"><strong>Další moderní možnosti:</strong> AirPrint (Apple), WiFi Direct, NFC tisk z mobilu.</p>
+<div class="question">
+<div class="question-text">Jaké jsou výhody cloud printu?</div>
+<textarea class="input-field" placeholder="Vzdálený přístup, tisk z mobilu odkudkoliv, sdílení..."></textarea>
+</div>
+<div class="question">
+<div class="question-text">A nevýhody nebo rizika?</div>
+<textarea class="input-field" placeholder="Bezpečnost dat, závislost na internetu, soukromí..."></textarea>
+</div>
+<div class="question">
+<div class="question-text">Kdy by se ti cloud print hodil?</div>
+<textarea class="input-field" placeholder="Když jsi pryč a potřebuješ něco vytisknout doma..."></textarea>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 11 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="12">
+<div class="page-title">Tiskový server</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Kámo, tohle je důležitý! Počítač nebo zařízení, které říká "kdo, kdy, jak a kolik může tisknout".</p>
+<p style="margin-bottom: 2rem;">Ve škole: tiskový server hlídá, abys nevytiskl celou Wikipedii. V práci: hlídá, kdo tiskl co (a v kolik). Centralizuje všechny tiskárny v síti a umožňuje sdílení.</p>
+<div class="question">
+<div class="question-text">Proč škola nebo firma potřebuje tiskový server?</div>
+<textarea class="input-field" placeholder="Kontrola nákladů, limity, správa tiskáren, bezpečnost..."></textarea>
+</div>
+<div class="question">
+<div class="question-text">Co všechno může tiskový server sledovat?</div>
+<textarea class="input-field" placeholder="Uživatel, počet stran, čas, typ dokumentu, barva/čb..."></textarea>
+</div>
+<div class="question">
+<div class="question-text">Jaký je rozdíl mezi tiskárnou připojenou přímo k PC a přes tiskový server?</div>
+<input type="text" class="input-field" placeholder="Sdílení, správa, kontrola...">
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 12 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="13">
+<div class="page-title">Scénář: Škola</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Ve škole je 500 studentů a 10 tiskáren. Každý má kredit 100 stran/měsíc.</p>
+<p style="margin-bottom: 2rem;">Před maturitou všichni tisknou prezentace. Fronta. Chaos.</p>
+<div class="question">
+<div class="question-text">Jak by ses připojil k tiskárně?</div>
+<div class="options">
+<div class="option">A) USB (lol)</div>
+<div class="option">B) Wi-Fi</div>
+<div class="option">C) LAN přes tiskový server</div>
+</div>
+</div>
+<div class="question">
+<div class="question-text">Proč se používá kredit?</div>
+<input type="text" class="input-field" placeholder="Ekonomika, kontrola...">
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 13 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="14">
+<div class="page-title">Scénář: Domácnost</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Doma máš inkoustovou tiskárnu. Tisknuješ jednou měsíčně.</p>
+<p style="margin-bottom: 2rem;">Každý druhý tisk = zaschlo, musíš čistit hlavy, plýtvat inkoustem.</p>
+<div class="question">
+<div class="question-text">Byla by lepší volba laserová?</div>
+<div class="options">
+<div class="option">A) Ano, toner nezaschne</div>
+<div class="option">B) Ne, moc drahá</div>
+<div class="option">C) Záleží na rozpočtu</div>
+</div>
+</div>
+<div class="question">
+<div class="question-text">Jak byste tiskárnu připojil/a?</div>
+<input type="text" class="input-field" placeholder="USB / Wi-Fi...">
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 14 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="15">
+<div class="page-title">Scénář: Kancelář</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">20 lidí, jedna laserová tiskárna, LAN připojení.</p>
+<p style="margin-bottom: 2rem;">Všichni sdílí přes print server. Funguje to. Nikdo si nestěžuje. Ideální stav.</p>
+<div class="question">
+<div class="question-text">Proč je laserová ideální do kanceláře?</div>
+<input type="text" class="input-field" placeholder="Rychlost, cena per page...">
+</div>
+<div class="question">
+<div class="question-text">Co by se stalo, kdyby vypadla síť?</div>
+<div class="options">
+<div class="option">A) Nikdo nebude tisknout</div>
+<div class="option">B) Půjde tisknout přes USB</div>
+<div class="option">C) Nic, tiskárna funguje offline</div>
+</div>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 15 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="16">
+<div class="page-title">Scénář: Obchod</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Obchod s oblečením. U kasy termální tiskárna na účtenky.</p>
+<p style="margin-bottom: 2rem;">Rychlá, tichá, spolehlivá. Zákazník dostane účtenku a jde pryč. Hotovo.</p>
+<div class="question">
+<div class="question-text">Proč by se nehodila inkoustová?</div>
+<input type="text" class="input-field" placeholder="Rychlost, náklady...">
+</div>
+<div class="question">
+<div class="question-text">Připojení?</div>
+<div class="options">
+<div class="option">A) USB k pokladně</div>
+<div class="option">B) Wi-Fi</div>
+<div class="option">C) Bluetooth</div>
+</div>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 16 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="17">
+<div class="page-title">Problém: Tiskárna offline</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Klasika. Tiskárna je zapnutá, ale PC říká "offline".</p>
+<p style="margin-bottom: 2rem;">Wi-Fi? Zkontroluj signál. LAN? Zkontroluj kabel. USB? Reinstaluj driver.</p>
+<div class="question">
+<div class="question-text">Co zkontrolovat jako první?</div>
+<input type="text" class="input-field" placeholder="Připojení k síti...">
+</div>
+<div class="question">
+<div class="question-text">A když to nepomůže?</div>
+<div class="options">
+<div class="option">A) Restart tiskárny</div>
+<div class="option">B) Restart PC</div>
+<div class="option">C) Reinstalace driveru</div>
+<div class="option">D) Všechno postupně</div>
+</div>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 17 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="18">
+<div class="page-title">Problém: Zamrzlá fronta</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Poslal jsi dokument na tisk. Nic se neděje. Fronta je plná starých jobů.</p>
+<p style="margin-bottom: 2rem;">Někdo před týdnem poslal 500 stránek a pak to zrušil. Job se zasekl. Blokuje všechno.</p>
+<div class="question">
+<div class="question-text">Jak vyčistit tiskovou frontu?</div>
+<input type="text" class="input-field" placeholder="Windows: Zařízení a tiskárny...">
+</div>
+<div class="question">
+<div class="question-text">Kdo má admin práva na print server?</div>
+<input type="text" class="input-field" placeholder="IT admin...">
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 18 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="19">
+<div class="page-title">Problém: Špatné barvy</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Tisknul jsi fotku. Vypadá to jako z 90. let. Barvy jsou off.</p>
+<p style="margin-bottom: 2rem;">Možnosti: zanesené trysky, špatný profil barev, levná cartridge, zkažený papír.</p>
+<div class="question">
+<div class="question-text">Co zkusit jako první?</div>
+<div class="options">
+<div class="option">A) Čištění trysek</div>
+<div class="option">B) Kalibrace barev</div>
+<div class="option">C) Výměna cartridge</div>
+</div>
+</div>
+<div class="question">
+<div class="question-text">Proč levná cartridge = špatná kvalita?</div>
+<input type="text" class="input-field" placeholder="Složení inkoustu...">
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 19 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="20">
+<div class="page-title">Problém: Paper jam</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Papír se zasekl. Klasika.</p>
+<p style="margin-bottom: 2rem;">Důvody: špatný papír, přeplněný zásobník, prach, opotřebované válečky.</p>
+<div class="question">
+<div class="question-text">Jak bezpečně vyndat zaseklý papír?</div>
+<input type="text" class="input-field" placeholder="Směr podávání, pomalu...">
+</div>
+<div class="question">
+<div class="question-text">Co nedělat?</div>
+<div class="options">
+<div class="option">A) Trhat ho na kusy</div>
+<div class="option">B) Tahat proti směru</div>
+<div class="option">C) Nechat ho tam</div>
+<div class="option">D) A i B</div>
+</div>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 20 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="21">
+<div class="page-title">Ovladače (Drivers)</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Bez ovladače = tiskárna je jen kus plastu.</p>
+<p style="margin-bottom: 2rem;">Driver = software, co říká PC "takhle mluvíš s tou tiskárnou". Windows často najde generický. Ale lepší je originální od výrobce.</p>
+<div class="question">
+<div class="question-text">Kde seženeš driver?</div>
+<div class="options">
+<div class="option">A) Web výrobce</div>
+<div class="option">B) Windows Update</div>
+<div class="option">C) CD z krabice (lol, kdo má CD?)</div>
+<div class="option">D) A nebo B</div>
+</div>
+</div>
+<div class="question">
+<div class="question-text">Proč generický driver nestačí?</div>
+<input type="text" class="input-field" placeholder="Funkce navíc, kvalita...">
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 21 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="22">
+<div class="page-title">Kvalita tisku</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">DPI = dots per inch. Čím víc, tím lepší.</p>
+<p style="margin-bottom: 2rem;">300 DPI = dokumenty. 600 DPI = fotky. 1200+ DPI = profesionální tisk.</p>
+<div class="question">
+<div class="question-text">Proč netisknout všechno v 1200 DPI?</div>
+<input type="text" class="input-field" placeholder="Rychlost, spotřeba inkoustu...">
+</div>
+<div class="question">
+<div class="question-text">Kdy má smysl vysoké DPI?</div>
+<div class="options">
+<div class="option">A) Esej do školy</div>
+<div class="option">B) Fotka na zeď</div>
+<div class="option">C) Email z fronty</div>
+</div>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 22 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="23">
+<div class="page-title">Oboustranný tisk (Duplex)</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Šetří papír, čas, lesy.</p>
+<p style="margin-bottom: 2rem;">Automatický duplex = tiskárna otočí papír sama. Manuální = otočíš ho ty a modlíš se, aby to sedělo.</p>
+<div class="question">
+<div class="question-text">Kdy použít duplex?</div>
+<input type="text" class="input-field" placeholder="Dokumenty, prezentace...">
+</div>
+<div class="question">
+<div class="question-text">Kdy ne?</div>
+<div class="options">
+<div class="option">A) Fotky</div>
+<div class="option">B) Certifikáty</div>
+<div class="option">C) Plakáty</div>
+<div class="option">D) Všechno výše</div>
+</div>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 23 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="24">
+<div class="page-title">Papír</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Levný papír = levná kvalita. Tiskárna to pozná.</p>
+<p style="margin-bottom: 2rem;">80g/m² = standard. 120g/m² = fotky, certifikáty. Recyklovaný = eco, ale horší barvy.</p>
+<div class="question">
+<div class="question-text">Proč nepoužít toaletní papír? (ne, vážně)</div>
+<input type="text" class="input-field" placeholder="Gramáž, struktura...">
+</div>
+<div class="question">
+<div class="question-text">Jaký papír na fotky?</div>
+<div class="options">
+<div class="option">A) Obyčejný A4</div>
+<div class="option">B) Fotopapír lesklý</div>
+<div class="option">C) Recyklovaný</div>
+</div>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 24 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="25">
+<div class="page-title">Náklady na tisk</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Levná tiskárna ≠ levný provoz.</p>
+<p style="margin-bottom: 2rem;">Inkoustová: 2000 Kč tiskárna + 800 Kč cartridge na 200 stran = 4 Kč/strana.<br>Laserová: 5000 Kč tiskárna + 1500 Kč toner na 2000 stran = 0.75 Kč/strana.</p>
+<div class="question">
+<div class="question-text">Která je levnější long-term?</div>
+<input type="text" class="input-field" placeholder="Laser...">
+</div>
+<div class="question">
+<div class="question-text">Kdy má smysl inkoustová?</div>
+<input type="text" class="input-field" placeholder="Málo tisknuješ, fotky...">
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 25 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="26">
+<div class="page-title">Bezpečnost</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Tiskárna na síti = potenciální risk.</p>
+<p style="margin-bottom: 2rem;">Někdo může: vidět co tisknuješ, hacknout tiskárnu (jo, fakt), použít ji jako vstup do sítě.</p>
+<div class="question">
+<div class="question-text">Jak zabezpečit tiskárnu?</div>
+<input type="text" class="input-field" placeholder="Heslo, firewall, updates...">
+</div>
+<div class="question">
+<div class="question-text">Proč update firmware?</div>
+<div class="options">
+<div class="option">A) Bezpečnostní záplaty</div>
+<div class="option">B) Nové funkce</div>
+<div class="option">C) Opravy bugů</div>
+<div class="option">D) Všechno</div>
+</div>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 26 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="27">
+<div class="page-title">Ekologie</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Tisk = papír, inkoust, toner, elektřina.</p>
+<p style="margin-bottom: 2rem;">Eco tipy: duplex, draft mode, recyklace cartridge, digitalizace když možno.</p>
+<div class="question">
+<div class="question-text">Kolik stromů zachráníš duplexem?</div>
+<input type="text" class="input-field" placeholder="50% papíru = hodně stromů...">
+</div>
+<div class="question">
+<div class="question-text">Proč nerecyklovat cartridge?</div>
+<div class="options">
+<div class="option">A) Je to složité</div>
+<div class="option">B) Nikdo to nedělá</div>
+<div class="option">C) Žádný důvod, mělo by se</div>
+</div>
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 27 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="28">
+<div class="page-title">Budoucnost tisku</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem;">Tisk pomalu umírá. Nebo se transformuje?</p>
+<p style="margin-bottom: 2rem;">3D tisk, biotisk, nano-tisk. Ale klasický papír? Pořád tu bude. Protože digitální podpis je cool, ale papírová smlouva má pořád váhu.</p>
+<div class="question">
+<div class="question-text">Zmizí klasický tisk?</div>
+<div class="options">
+<div class="option">A) Ano, za 10 let</div>
+<div class="option">B) Ne, pořád bude potřeba</div>
+<div class="option">C) Záleží na oboru</div>
+</div>
+</div>
+<div class="question">
+<div class="question-text">Co podle tebe nahradí papír?</div>
+<input type="text" class="input-field" placeholder="E-ink, tablety, hologramy...">
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 28 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="29">
+<div class="page-title">Co sis zapamatoval?</div>
+<div class="page-content">
+<p style="margin-bottom: 2rem;">Rychlý check. Bez google.</p>
+<div class="question">
+<div class="question-text">1. Jaké typy tiskáren znáš?</div>
+<input type="text" class="input-field" name="q29_1">
+</div>
+<div class="question">
+<div class="question-text">2. Která je nejrychlejší?</div>
+<input type="text" class="input-field" name="q29_2">
+</div>
+<div class="question">
+<div class="question-text">3. Jak připojit tiskárnu v kanceláři?</div>
+<input type="text" class="input-field" name="q29_3">
+</div>
+<div class="question">
+<div class="question-text">4. Co dělá tiskový server?</div>
+<input type="text" class="input-field" name="q29_4">
+</div>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 29 / 31</span>
+<button class="nav-button" onclick="nextPage()">Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+<div class="page" data-page="30">
+<div class="page-title">Hotovo, kámo!</div>
+<div class="page-content">
+<p style="margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: 600;">Gratuluji, vole. Prošel jsi celý pracovní list.</p>
+<p style="margin-bottom: 2rem;">Teď víš víc o tiskárnách než 90% lidí. Použiješ to někdy? Možná. Možná ne. Ale až ti někdo řekne "tiskárna nefunguje", budeš vědět proč.</p>
+<p style="margin-bottom: 1.5rem; font-weight: 600;">Teď už jen napiš svoje jméno a odevzdej test:</p>
+<form id="worksheetForm" action="https://formspree.io/f/xgooezby" method="POST">
+<div class="form-group">
+<label for="studentName">Tvoje jméno:</label>
+<input type="text" id="studentName" name="student_name" class="input-field" required placeholder="Jméno a příjmení">
+</div>
+<div class="form-group">
+<label for="studentEmail">Email (volitelně):</label>
+<input type="email" id="studentEmail" name="student_email" class="input-field" placeholder="tvuj@email.cz">
+</div>
+<input type="hidden" name="time_spent" id="timeSpent">
+<input type="hidden" name="all_answers" id="allAnswers">
+<button type="submit" class="submit-button">Odevzdat test</button>
+</form>
+</div>
+<div class="navigation">
+<button class="nav-button" onclick="prevPage()">← Zpět</button>
+<span>Strana 31 / 31</span>
+<button class="nav-button" onclick="nextPage()" disabled>Další →</button>
+</div>
+<div class="footer">Created by teddysk52 — ivanalipov.me</div>
+</div>
+
+</div>
+</div>
+
+<script>
+let currentPage = 0;
+const totalPages = 31;
+let timerInterval;
+let timeRemaining = 35 * 60;
+let startTime;
+
+function startWorksheet() {
+showPage(1);
+startTimer();
+document.getElementById('finishBtn').classList.add('active');
+convertOptionsToCheckboxes();
+}
+
+function startTimer() {
+const timerEl = document.getElementById('timer');
+timerEl.classList.add('active');
+startTime = Date.now();
+timerInterval = setInterval(() => {
+timeRemaining--;
+const minutes = Math.floor(timeRemaining / 60);
+const seconds = timeRemaining % 60;
+timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+if (timeRemaining <= 0) {
+clearInterval(timerInterval);
+timerEl.textContent = 'Čas vypršel!';
+timerEl.style.background = '#ff4444';
+timerEl.style.color = 'white';
+}
+}, 1000);
+}
+
+function showPage(n) {
+const pages = document.querySelectorAll('.page');
+pages.forEach(p => p.classList.remove('active'));
+const targetPage = document.querySelector(`.page[data-page="${n}"]`);
+if (targetPage) {
+targetPage.classList.add('active');
+currentPage = n;
+}
+}
+
+function nextPage() {
+if (currentPage < totalPages) {
+showPage(currentPage + 1);
+}
+}
+
+function prevPage() {
+if (currentPage > 0) {
+showPage(currentPage - 1);
+}
+}
+
+function goToStart() {
+showPage(0);
+clearInterval(timerInterval);
+const timerEl = document.getElementById('timer');
+timerEl.classList.remove('active');
+timeRemaining = 35 * 60;
+}
+
+function collectAnswers() {
+const answers = {};
+let questionNumber = 0;
+
+// Собираем все страницы
+const pages = document.querySelectorAll('.page');
+pages.forEach((page, pageIndex) => {
+const pageTitle = page.querySelector('.page-title');
+if (!pageTitle || pageIndex === 0) return; // Пропускаем главную страницу
+        
+const pageNum = pageIndex;
+const pageName = pageTitle.textContent.trim();
+        
+// Собираем ответы с этой страницы
+const inputs = page.querySelectorAll('input[type="text"]:not([name="student_name"]):not([name="student_email"]), textarea:not([name="all_answers"])');
+inputs.forEach((input, idx) => {
+if (input.value && input.value.trim()) {
+questionNumber++;
+const questionText = input.closest('.question')?.querySelector('.question-text')?.textContent.trim() || input.placeholder;
+answers[`Str_${pageNum}_Q${idx + 1}`] = `${questionText}\n→ ${input.value}`;
+}
+});
+        
+// Собираем чекбоксы
+const checkboxGroups = {};
+const checkboxes = page.querySelectorAll('input[type="checkbox"]:checked');
+checkboxes.forEach(cb => {
+if (cb.name) {
+if (!checkboxGroups[cb.name]) {
+checkboxGroups[cb.name] = [];
+}
+checkboxGroups[cb.name].push(cb.value || cb.parentElement.textContent.trim());
+}
+});
+        
+Object.entries(checkboxGroups).forEach(([name, values]) => {
+questionNumber++;
+const questionDiv = page.querySelector(`input[name="${name}"]`)?.closest('.question');
+const questionText = questionDiv?.querySelector('.question-text')?.textContent.trim() || name;
+answers[`Str_${pageNum}_Checkbox`] = `${questionText}\n→ ${values.join(', ')}`;
+});
+});
+    
+return answers;
+}
+
+function convertOptionsToCheckboxes() {
+const allOptions = document.querySelectorAll('.option');
+allOptions.forEach((option, index) => {
+if (!option.querySelector('input[type="checkbox"]')) {
+const text = option.textContent.trim();
+const questionDiv = option.closest('.question');
+const questionIndex = Array.from(document.querySelectorAll('.question')).indexOf(questionDiv);
+const optionLetter = text.charAt(0);
+            
+const checkbox = document.createElement('input');
+checkbox.type = 'checkbox';
+checkbox.name = `q_${questionIndex}_options`;
+checkbox.value = optionLetter;
+checkbox.addEventListener('change', function() {
+const siblings = this.closest('.options').querySelectorAll('input[type="checkbox"]');
+siblings.forEach(cb => {
+if (cb !== this) {
+cb.checked = false;
+cb.parentElement.parentElement.classList.remove('selected');
+}
+});
+this.parentElement.parentElement.classList.toggle('selected', this.checked);
+});
+            
+option.innerHTML = '';
+const label = document.createElement('label');
+label.style.display = 'flex';
+label.style.alignItems = 'center';
+label.style.gap = '0.5rem';
+label.style.cursor = 'pointer';
+label.style.width = '100%';
+label.appendChild(checkbox);
+label.appendChild(document.createTextNode(text));
+option.appendChild(label);
+}
+});
+}
+
+function finishEarly() {
+if (confirm('Opravdu chceš dokončit pracovní list předčasně?')) {
+showPage(30);
+}
+}
+
+function submitAnswers() {
+const studentName = prompt('Zadej své jméno:');
+if (!studentName) {
+alert('Musíš zadat jméno!');
+return;
+}
+    
+const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+const minutes = Math.floor(timeSpent / 60);
+const seconds = timeSpent % 60;
+const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    
+const answers = collectAnswers();
+const allAnswersText = Object.entries(answers)
+.map(([key, value]) => {
+const displayValue = Array.isArray(value) ? value.join(', ') : value;
+return `${key}: ${displayValue}`;
+})
+.join('\n');
+    
+const formData = new FormData();
+formData.append('student_name', studentName);
+formData.append('time_spent', timeString);
+formData.append('all_answers', allAnswersText);
+    
+fetch('https://formspree.io/f/xgooezby', {
+method: 'POST',
+body: formData,
+headers: {
+'Accept': 'application/json'
+}
+})
+.then(response => {
+if (response.ok) {
+alert(`Díky ${studentName}! Tvoje odpovědi byly odeslány. Čas: ${timeString}`);
+goToStart();
+} else {
+alert('Chyba při odesílání. Zkus to znovu.');
+}
+})
+.catch(error => {
+alert('Chyba při odesílání: ' + error);
+});
+}
+
+document.getElementById('worksheetForm')?.addEventListener('submit', function(e) {
+const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+const minutes = Math.floor(timeSpent / 60);
+const seconds = timeSpent % 60;
+document.getElementById('timeSpent').value = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+const answers = collectAnswers();
+let formattedAnswers = '=== ODPOVĚDI STUDENTA ===\n\n';
+
+Object.entries(answers).forEach(([key, value]) => {
+formattedAnswers += `${value}\n\n`;
+});
+
+formattedAnswers += `\n=== CELKOVÝ ČAS: ${minutes}:${seconds.toString().padStart(2, '0')} ===`;
+
+document.getElementById('allAnswers').value = formattedAnswers;
+});
+
+document.addEventListener('keydown', (e) => {
+if (currentPage > 0) {
+if (e.key === 'ArrowRight') nextPage();
+if (e.key === 'ArrowLeft') prevPage();
+}
+});
+
+function toggleBlur(side) {
+const element = side === 'left' ? document.getElementById('bgLeft') : document.getElementById('bgRight');
+const button = side === 'left' ? document.getElementById('blurBtnLeft') : document.getElementById('blurBtnRight');
+
+if (!element || !button) return;
+
+element.classList.toggle('blurred');
+button.classList.toggle('active');
+
+const svg = button.querySelector('svg');
+if (element.classList.contains('blurred')) {
+svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+} else {
+svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+}
+}
+</script>
+
+</body>
+</html>
